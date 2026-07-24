@@ -15,6 +15,7 @@ A modern and elegant web-based calculator that performs basic arithmetic operati
 
 ## How to Run
 Simply open the `index.htm` file in any modern web browser to interact. 
+- Link : https://justayushman.github.io/javascript-projects/Caculator(Simple)/
 
 ## Future Improvements
 - Add support for keyboard inputs.
