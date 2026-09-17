@@ -1,0 +1,35 @@
+body{
+    background-color: rgb(69, 69, 68);
+}
+#countLable{
+    display: block;
+    text-align: center;
+    font-size: 10rem;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: bisque;
+    color: #ffffff;
+}
+
+#btnContainers{
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;        /* 🔥 THIS IS THE KEY */
+    margin-top: 20px;
+}
+
+
+.button{
+    margin: 10px;
+    color: white;
+    background-color: rgb(85, 136, 218);
+    padding: 10px 20px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.25s;
+}
+
+.button:hover{
+    background-color: rgb(241, 135, 6);
+}

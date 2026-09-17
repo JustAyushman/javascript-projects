@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>System Simulation</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      font-family: monospace;
+      color: #00ff00;
+      overflow: hidden;
+    }
+
+    .terminal {
+      padding: 20px;
+    }
+
+    .alert {
+      color: red;
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 20px;
+      border: 1px solid #00ff00;
+      margin-top: 10px;
+    }
+
+    #progress {
+      height: 100%;
+      width: 0%;
+      background: #00ff00;
+    }
+
+    #finalMessage {
+      font-size: 22px;
+      margin-top: 20px;
+    }
+
+    #metrics {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+
+    #metrics p {
+      margin: 5px 0;
+    }
+
+    /* Red Matrix Overlay */
+    #dangerScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 9999;
+      background: black;
+    }
+
+    #matrixCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .warning-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #ff0000;
+      font-size: 3rem;
+      font-weight: bold;
+      text-align: center;
+      text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+      animation: blink 0.6s infinite alternate;
+      pointer-events: none;
+    }
+
+    @keyframes blink {
+      0% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="terminal">
+  <div id="alertBox" class="alert">⚠ Accessing system...</div>
+
+  <div id="downloadSection" class="hidden">
+    <p>Downloading files...</p>
+    <div class="progress-bar">
+      <div id="progress"></div>
+    </div>
+    <p id="percent">0%</p>
+  </div>
+
+  <div id="finalMessage" class="hidden">
+    <span class="final-text"></span>
+  </div>
+
+  <div id="metrics" class="hidden">
+    <p>System Integrity: <span id="integrity">100</span>%</p>
+    <p>Security Level: <span id="security">100</span>%</p>
+    <p>Firewall Status: <span id="firewall">100</span>%</p>
+  </div>
+
+  <div id="dangerScreen" class="hidden">
+    <canvas id="matrixCanvas"></canvas>
+    <div class="warning-text">⚠ SYSTEM COMPROMISED ⚠</div>
+    
+  </div>
+</div>
+
+<script>
+  const alertBox = document.getElementById("alertBox");
+  const downloadSection = document.getElementById("downloadSection");
+  const progress = document.getElementById("progress");
+  const percentText = document.getElementById("percent");
+  const finalMessage = document.getElementById("finalMessage");
+  const metrics = document.getElementById("metrics");
+  const integrity = document.getElementById("integrity");
+  const security = document.getElementById("security");
+  const firewall = document.getElementById("firewall");
+
+  // Step 1: Start download after alert
+  setTimeout(() => {
+    alertBox.classList.add("hidden");
+    downloadSection.classList.remove("hidden");
+    startDownload();
+  }, 2000);
+
+  // Step 2: Progress animation
+  function startDownload() {
+    let width = 0;
+    const interval = setInterval(() => {
+      if (width >= 100) {
+        clearInterval(interval);
+        downloadSection.classList.add("hidden");
+        showFinalScreen();
+      } else {
+        width++;
+        progress.style.width = width + "%";
+        percentText.textContent = width + "%";
+      }
+    }, 30);
+  }
+
+  // Step 3: Typewriter simulation completion text
+  function showFinalScreen() {
+    finalMessage.classList.remove("hidden");
+    const textElement = document.querySelector(".final-text");
+    let message = "Redirecting......";
+    let index = 0;
+    textElement.textContent = "";
+
+    const typing = setInterval(() => {
+      if (index < message.length) {
+        textElement.textContent += message[index];
+        index++;
+      } else {
+        clearInterval(typing);
+        setTimeout(() => {
+          finalMessage.classList.add("hidden");
+          metrics.classList.remove("hidden");
+          startMetricsDrop();
+        }, 1500);
+      }
+    }, 60);
+  }
+
+  // Step 4: Drop metrics to zero
+  function startMetricsDrop() {
+    let i = 100, s = 100, f = 100;
+
+    const dropInterval = setInterval(() => {
+      if (i <= 0 && s <= 0 && f <= 0) {
+        clearInterval(dropInterval);
+        integrity.textContent = "0";
+        security.textContent = "0";
+        firewall.textContent = "0";
+
+        setTimeout(triggerDangerScreen, 800);
+      } else {
+        if (i > 0) i -= Math.random() * 4;
+        if (s > 0) s -= Math.random() * 5;
+        if (f > 0) f -= Math.random() * 6;
+
+        integrity.textContent = Math.max(0, Math.floor(i));
+        security.textContent = Math.max(0, Math.floor(s));
+        firewall.textContent = Math.max(0, Math.floor(f));
+      }
+    }, 150);
+  }
+
+  // Step 5: Red Matrix Rain animation
+  function triggerDangerScreen() {
+    metrics.classList.add("hidden");
+    
+    const dangerScreen = document.getElementById("dangerScreen");
+    dangerScreen.classList.remove("hidden");
+
+    const canvas = document.getElementById("matrixCanvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()";
+    const fontSize = 16;
+    const columns = Math.floor(canvas.width / fontSize);
+    const drops = Array(columns).fill(1);
+
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = "#ff0000";
+      ctx.font = fontSize + "px monospace";
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars.charAt(Math.floor(Math.random() * chars.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+
+    setInterval(drawMatrix, 33);
+    
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  }
+</script>
+</body>
+</html>
